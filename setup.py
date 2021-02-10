@@ -3,12 +3,17 @@ import setuptools
 with open("README.md", "r", encoding="utf-8") as fh:
     long_description = fh.read()
 
+with open('requirements.txt') as f:
+    install_requires = f.read().splitlines()
+
+with open('requirements-dev.txt') as f:
+    tests_requirements = [line for line in f.read().splitlines() if '-r ' not in line]
+
 
 def test_suite():
     import unittest
     test_loader = unittest.TestLoader()
-    test_suite = test_loader.discover('tests', pattern='test_*.py')
-    return test_suite
+    return test_loader.discover('tests', pattern='test_*.py')
 
 
 setuptools.setup(
@@ -29,6 +34,7 @@ setuptools.setup(
     ],
     python_requires='>=3.6',
     scripts=["scripts/postcodes"],
-    install_requires=[],
+    install_requires=install_requires,
+    tests_require=tests_requirements,
     test_suite='setup.test_suite',
 )
