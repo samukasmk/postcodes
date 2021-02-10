@@ -2,8 +2,8 @@ class PostCodeUK():
     """Object to parse postal code to UK format."""
 
     def __init__(self, postcode):
-        self.__raw_postcode = None
-        self.__full_postcode = None
+        self.__raw_postcode = postcode
+        self.__full_postcode = self.__raw_postcode.upper()
         self.__outward = None
         self.__inward = None
         self.__area = None
