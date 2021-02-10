@@ -1,0 +1,18 @@
+#!/usr/bin/env python
+
+import argparse
+from postcodes.command_line import valide_post_code
+
+if __name__ == '__main__':
+    parser = argparse.ArgumentParser(description='A command line to parses postcodes.')
+    parser.add_argument('-r', '--region-format', type=str, default='uk',
+                        help='The region format.')
+    parser.add_argument('-p', '--postcodes', type=str, nargs='*', required=True,
+                        help='The post code to analise.')
+    args = parser.parse_args()
+
+    # executes the format validations
+    display_output = valide_post_code(args.region_format, args.postcodes)
+
+    # show on user screen
+    print(display_output)
