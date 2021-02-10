@@ -9,6 +9,6 @@ class TestPostCodeUK(unittest.TestCase):
 
     @parameterized.expand(['AA9A 9AA', 'A9A 9AA', 'A9 9AA', 'A99 9AA', 'AA9 9AA', 'AA99 9AA'])
     def test_postcode_uk_init(self, postcode_format):
-        postcode = PostCodeUK()
+        postcode = PostCodeUK(postcode_format)
         assert postcode != None
 
