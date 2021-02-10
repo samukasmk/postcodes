@@ -2,7 +2,8 @@ class PostCodeUK():
     """Object to parse postal code to UK format."""
 
     def __init__(self, postcode):
-        self.__postcode = None
+        self.__raw_postcode = None
+        self.__full_postcode = None
         self.__outward = None
         self.__inward = None
         self.__area = None
@@ -11,9 +12,14 @@ class PostCodeUK():
         self.__unit = None
 
     @property
-    def postcode(self):
+    def raw_postcode(self):
         """Raw postcode attribute"""
-        return self.__postcode
+        return self.__raw_postcode
+
+    @property
+    def full_postcode(self):
+        """Full postcode attribute"""
+        return self.__full_postcode
 
     @property
     def outward(self):
