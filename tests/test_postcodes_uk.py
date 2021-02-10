@@ -28,3 +28,9 @@ class TestPostCodeUK(unittest.TestCase):
         postcode = PostCodeUK(postcode.lower())
         self.assertEqual(postcode.is_valid(), False)
         self.assertEqual(postcode.errors, {'area': 'Invalid area format.'})
+
+    @parameterized.expand(['A 9A', 'AA 9A', 'AAA 9A', 'A 9AA', 'AA 9AA', 'AAA 9AA'])
+    def test_postcodes_uk_invalid_district(self, postcode):
+        postcode = PostCodeUK(postcode.lower())
+        self.assertEqual(postcode.is_valid(), False)
+        self.assertEqual(postcode.errors, {'district': 'Invalid district format.'})
