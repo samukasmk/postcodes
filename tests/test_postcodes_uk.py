@@ -1,5 +1,5 @@
 import unittest
-from postcodes import PostCodeUK
+from postcodes.uk import PostCodeUK
 from parameterized import parameterized
 
 
