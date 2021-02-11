@@ -14,6 +14,13 @@ class TestPostCodeUK(unittest.TestCase):
         self.assertEqual(postcode.raw_postcode, raw_postcode)
         self.assertEqual(postcode.full_postcode, raw_postcode.upper())
 
+    def test_postcodes_uk_outward_and_inward(self):
+        raw_postcode = 'AA9A 9AA'
+        outward, inward = raw_postcode.split(' ')
+        postcode = PostCodeUK(raw_postcode)
+        self.assertEqual(postcode.outward, outward)
+        self.assertEqual(postcode.inward, inward)
+
     @parameterized.expand([['AA9A 9AA', 'AA', '9A', '9', 'AA'],
                            ['A9A 9AA', 'A', '9A', '9', 'AA'],
                            ['A9 9AA', 'A', '9', '9', 'AA'],
@@ -24,11 +31,11 @@ class TestPostCodeUK(unittest.TestCase):
         postcode = PostCodeUK(raw_postcode)
         self.assertEqual(postcode.raw_postcode, raw_postcode)
         self.assertEqual(postcode.full_postcode, raw_postcode)
-        self.assertEqual(postcode.is_valid, True)
         self.assertEqual(postcode.area, area)
         self.assertEqual(postcode.district, district)
         self.assertEqual(postcode.sector, sector)
         self.assertEqual(postcode.unit, unit)
+        self.assertEqual(postcode.is_valid, True)
 
     @parameterized.expand(['9A 9AA', '9A 9AA', '9 9AA', '99 9AA', '9 9AA', '99 9AA'])
     def test_postcodes_uk_invalid_area(self, raw_postcode):
@@ -38,7 +45,7 @@ class TestPostCodeUK(unittest.TestCase):
         self.assertEqual(postcode.is_valid, False)
         self.assertEqual(postcode.errors, {'area': 'Invalid area format.'})
 
-    @parameterized.expand(['A 9A', 'AA 9A', 'AAA 9A', 'A 9AA', 'AA 9AA', 'AAA 9AA'])
+    @parameterized.expand(['A 9AA', 'AA 9AA', 'AAA 9AA'])
     def test_postcodes_uk_invalid_district(self, raw_postcode):
         postcode = PostCodeUK(raw_postcode)
         self.assertEqual(postcode.raw_postcode, raw_postcode)

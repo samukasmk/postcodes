@@ -1,89 +1,108 @@
 import re
 
-search_patterns = {'area': re.compile(r'^([A-Z]*).*'),
-                   'district': re.compile(r'^[A-Z]*([0-9][A-Z0-9]*)'),
-                   'sector': re.compile(r'.*[0-9].*([0-9])'),
-                   'unit': re.compile(r'.*[0-9]([A-Z]*)$')}
 
-validation_patterns = {'area': re.compile(r'^[A-Z]{1,2}$'),
-                       'district': re.compile(r'^[0-9][A-Z0-9]?$'),
-                       'sector': re.compile(r'^[0-9]$'),
-                       'unit': re.compile(r'^[A-Z]{2}$')}
-
-
-class PostCodeUK():
+class PostCodeUK:
     """Object to parse postal code to UK format."""
 
     def __init__(self, postcode):
+        # define internal attributes
+        self.__regex_patterns = {'area': re.compile(r'^([A-Z]{1,2})'),
+                                 'district': re.compile(r'([0-9][A-Z0-9]?)$'),
+                                 'sector': re.compile(r'^([0-9])'),
+                                 'unit': re.compile(r'([A-Z]{2})$')}
         self.__raw_postcode = postcode
         self.__full_postcode = self.__raw_postcode.upper()
-        self.__attribute_values = {}
+        self.__outward = None
+        self.__inward = None
+        self.__attributes = {'area': None, 'district': None, 'sector': None, 'unit': None}
         self.__errors = {}
 
-        for attribute in ['area', 'district', 'sector', 'unit']:
-            # search attribute fragment in the full string
-            attribute_value = self.get_first_regex_group(regex_pattern=search_patterns[attribute],
-                                                         search_in_text=self.full_postcode)
-            self.__attribute_values[attribute] = attribute_value
+        # parses postcode format
+        self.__validate_postcode_sides()
+        self.__validate_postcode_attributes()
 
-            # validate attribute fragment
-            attribute_is_valid = False
-            if attribute_value:
-                attribute_is_valid = self.regex_is_matched(regex_pattern=validation_patterns[attribute],
-                                                           search_in_text=attribute_value)
-            if not attribute_value or attribute_is_valid is False:
-                self.__errors[attribute] = f'Invalid {attribute} format.'
+    @property
+    def regex_patterns(self):
+        """Regexp patterns"""
+        return self.__regex_patterns
 
-    def get_first_regex_group(self, regex_pattern, search_in_text):
-        matched_search = regex_pattern.match(search_in_text)
+    @property
+    def raw_postcode(self):
+        """Raw postcode text"""
+        return self.__raw_postcode
+
+    @property
+    def full_postcode(self):
+        """Full postcode text normalized"""
+        return self.__full_postcode
+
+    @property
+    def outward(self):
+        """Outward attribute"""
+        return self.__outward
+
+    @property
+    def inward(self):
+        """Inward attribute"""
+        return self.__inward
+
+    @property
+    def area(self):
+        """Area attribute"""
+        return self.__attributes['area']
+
+    @property
+    def district(self):
+        """District attribute"""
+        return self.__attributes['district']
+
+    @property
+    def sector(self):
+        """Sector attribute"""
+        return self.__attributes['sector']
+
+    @property
+    def unit(self):
+        """Unit attribute"""
+        return self.__attributes['unit']
+
+    @property
+    def errors(self):
+        """Errors dict"""
+        return self.__errors
+
+    @property
+    def is_valid(self):
+        """Validation status"""
+        return not self.__errors
+
+    def __validate_postcode_sides(self):
+        """Splits full postcode in 2 sides (outward and inward)"""
+        postcode_sides = self.__full_postcode.split(' ')
+        if len(postcode_sides) == 2:
+            self.__outward, self.__inward = postcode_sides
+        else:
+            self.__errors['missing_space'] = 'Postcode is missing space.'
+            return
+
+    def __validate_postcode_attributes(self):
+        """Validates postcode formats in separated sides as
+           (area and district in outward str) and (sector and unit inward str)
+        """
+        for postcode_side, attributes in [[self.outward, ['area', 'district']],
+                                          [self.inward, ['sector', 'unit']]]:
+            for name in attributes:
+                self.__attributes[name] = self.__get_first_regex_group(regex_pattern=self.regex_patterns[name],
+                                                                       search_in_text=postcode_side)
+                if not self.__attributes[name]:
+                    self.__errors[name] = f'Invalid {name} format.'
+
+    @staticmethod
+    def __get_first_regex_group(regex_pattern, search_in_text):
+        """Search regex in text and return first group matched"""
+        matched_search = regex_pattern.search(search_in_text)
         if matched_search and matched_search.groups():
             attribute_value = matched_search.groups()[0]
             if attribute_value:
                 return attribute_value
         return None
-
-    def regex_is_matched(self, regex_pattern, search_in_text):
-        matched_search = regex_pattern.match(search_in_text)
-        if matched_search and matched_search.group():
-            return True
-        return False
-
-    @property
-    def raw_postcode(self):
-        """Raw postcode attribute"""
-        return self.__raw_postcode
-
-    @property
-    def full_postcode(self):
-        """Full postcode attribute"""
-        return self.__full_postcode
-
-    @property
-    def area(self):
-        """Area attribute"""
-        return self.__attribute_values['area']
-
-    @property
-    def district(self):
-        """District attribute"""
-        return self.__attribute_values['district']
-
-    @property
-    def sector(self):
-        """Sector attribute"""
-        return self.__attribute_values['sector']
-
-    @property
-    def unit(self):
-        """Unit attribute"""
-        return self.__attribute_values['unit']
-
-    @property
-    def errors(self):
-        """Inward code attribute"""
-        return self.__errors
-
-    @property
-    def is_valid(self):
-        """Valid status attribute"""
-        return not self.__errors
