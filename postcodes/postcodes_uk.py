@@ -11,13 +11,14 @@ class PostCodeUK:
                                  'sector': re.compile(r'^([0-9])'),
                                  'unit': re.compile(r'([A-Z]{2})$')}
         self.__raw_postcode = postcode
-        self.__full_postcode = self.__raw_postcode.upper()
+        self.__full_postcode = None
         self.__outward = None
         self.__inward = None
         self.__attributes = {'area': None, 'district': None, 'sector': None, 'unit': None}
         self.__errors = {}
 
         # parses postcode format
+        self.__normalize_postcode()
         self.__validate_postcode_sides()
         self.__validate_postcode_attributes()
 
@@ -75,6 +76,11 @@ class PostCodeUK:
     def is_valid(self):
         """Validation status"""
         return not self.__errors
+
+    def __normalize_postcode(self):
+        """Normalize raw postcode with uppercase and remove too many spaces"""
+        self.__full_postcode = self.__raw_postcode.upper()
+        self.__full_postcode = re.sub(r' +', ' ', self.__full_postcode)
 
     def __validate_postcode_sides(self):
         """Splits full postcode in 2 sides (outward and inward)"""

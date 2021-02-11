@@ -5,16 +5,19 @@ from parameterized import parameterized
 
 class TestPostCodeUK(unittest.TestCase):
 
-    def setUp(self):
-        pass
-
-    def test_postcodes_uk_uppercase(self):
+    def test_postcodes_uk_uppercase_normalization(self):
         raw_postcode = 'aa9a 9aa'
         postcode = PostCodeUK(raw_postcode)
         self.assertEqual(postcode.raw_postcode, raw_postcode)
-        self.assertEqual(postcode.full_postcode, raw_postcode.upper())
+        self.assertEqual(postcode.full_postcode, 'AA9A 9AA')
 
-    def test_postcodes_uk_outward_and_inward(self):
+    def test_postcodes_uk_too_many_spaces_normalization(self):
+        raw_postcode = 'AA9A  9AA'
+        postcode = PostCodeUK(raw_postcode)
+        self.assertEqual(postcode.raw_postcode, raw_postcode)
+        self.assertEqual(postcode.full_postcode, 'AA9A 9AA')
+
+    def test_postcodes_uk_outward_and_inward_validations(self):
         raw_postcode = 'AA9A 9AA'
         outward, inward = raw_postcode.split(' ')
         postcode = PostCodeUK(raw_postcode)
