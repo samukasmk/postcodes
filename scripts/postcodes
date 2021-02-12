@@ -1,18 +1,68 @@
 #!/usr/bin/env python
 
+import sys
+import json
 import argparse
-from postcodes.command_line import valide_post_code
+from postcodes.uk import PostCodeUK
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='A command line to parses postcodes.')
-    parser.add_argument('-r', '--region-format', type=str, default='uk',
-                        help='The region format.')
     parser.add_argument('-p', '--postcodes', type=str, nargs='*', required=True,
                         help='The post code to analise.')
+    parser.add_argument('-r', '--region-format', type=str, default='UK',
+                        help='The region format.')
+    parser.add_argument('-o', '--output-format', type=str, default='text', choices=['json', 'text'],
+                        help='The region format.')
     args = parser.parse_args()
 
-    # executes the format validations
-    display_output = valide_post_code(args.region_format, args.postcodes)
+    if args.region_format != 'UK':
+        print('Sorry! Unfortunately this program still only supports postal codes from uk.\nExiting with error...')
+        sys.exit(127)
 
-    # show on user screen
-    print(display_output)
+    # executes the format validations
+    if args.output_format == 'text':
+        print('Parsing postcode validations...')
+
+    all_postcodes = {}
+    valid_postcodes = []
+    invalid_postcodes = []
+    for raw_postcode in args.postcodes:
+        postcode = PostCodeUK(raw_postcode)
+
+        if args.output_format == 'json':
+            all_postcodes[raw_postcode] = postcode.to_dict()
+            continue
+
+        status = 'VALID' if postcode.is_valid else 'INVALID'
+        print('\n---')
+        print(f'Postcode ({postcode.full_postcode}) format is: {status}')
+
+        if postcode.is_valid:
+            valid_postcodes.append(postcode.full_postcode)
+        else:
+            invalid_postcodes.append(postcode.full_postcode)
+            print('  Errors:')
+
+        for error_detail in postcode.errors.values():
+            print(f'    -> {error_detail}')
+
+        print('  Attributes:')
+        for attribute in postcode.attributes:
+            attribute_detail = '(invalid format)' if attribute in postcode.errors.keys() else ''
+            print(f'    -> {attribute}: {getattr(postcode, attribute)}{attribute_detail}')
+
+    if args.output_format == 'json':
+        print(json.dumps(all_postcodes, indent=4, sort_keys=True))
+        sys.exit(0)
+
+    else:
+        print('\n---')
+        print('Results:')
+        if valid_postcodes:
+            valid_postcodes_str = '(' + '), ('.join(valid_postcodes) + ')'
+            print(f'  -> Valid postcodes: {valid_postcodes_str}')
+
+        if invalid_postcodes:
+            invalid_postcodes_str = '(' + '), ('.join(invalid_postcodes) + ')'
+            print(f'  -> Invalid postcodes: {invalid_postcodes_str}')
+            sys.exit(1)

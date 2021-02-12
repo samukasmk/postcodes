@@ -73,3 +73,11 @@ def test_postcodes_uk_invalid_unit(raw_postcode):
     assert postcode.full_postcode == raw_postcode
     assert postcode.is_valid is False
     assert postcode.errors == {'unit': 'Invalid unit format.'}
+
+#
+# def test_postcodes_uk_to_dict():
+#     raw_postcode = 'AA9A 9AA'
+#     outward, inward = raw_postcode.split(' ')
+#     postcode = PostCodeUK(raw_postcode)
+#     assert postcode.outward == outward
+#     assert postcode.inward == inward
