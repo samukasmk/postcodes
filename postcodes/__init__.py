@@ -4,4 +4,3 @@ __title__ = "postcodes"
 __author__ = "Samuel Sampaio"
 __license__ = "Apache 2.0"
 
-from .postcodes_uk import *
