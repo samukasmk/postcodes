@@ -9,13 +9,6 @@ with open('requirements.txt') as f:
 with open('requirements-dev.txt') as f:
     tests_requirements = [line for line in f.read().splitlines() if '-r ' not in line]
 
-
-def test_suite():
-    import unittest
-    test_loader = unittest.TestLoader()
-    return test_loader.discover('tests', pattern='test_*.py')
-
-
 setuptools.setup(
     name="postcodes",
     version="0.0.1",
@@ -35,6 +28,7 @@ setuptools.setup(
     python_requires='>=3.6',
     scripts=["scripts/postcodes"],
     install_requires=install_requires,
+    setup_requires='pytest-runner',
     tests_require=tests_requirements,
     test_suite='setup.test_suite',
 )
