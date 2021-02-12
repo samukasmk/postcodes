@@ -1,26 +1,74 @@
 import re
 
+REGEX_AREA_VALIDATION = re.compile(r'^[A-Z]{1,2}$')
+REGEX_DISTRICT_VALIDATION = re.compile(r'^[0-9][A-Z0-9]?$')
+REGEX_SECTOR_VALIDATION = re.compile(r'^[0-9]$')
+REGEX_UNIT_VALIDATION = re.compile(r'^[A-Z]{2}$')
+REGEX_INSERT_SPACE_BEFORE_DIGITS = re.compile(r'([0-9]+)')
+REGEX_INSERT_SPACE_AFTER_DIGITS = re.compile(r'([0-9]+)')
+REGEX_SPLIT_SIDES_BY_SPACES = re.compile(r' +')
+
+POSTCODE_VALIDATIONS = {'area': REGEX_AREA_VALIDATION,
+                        'district': REGEX_DISTRICT_VALIDATION,
+                        'sector': REGEX_SECTOR_VALIDATION,
+                        'unit': REGEX_UNIT_VALIDATION}
+
 
 class PostCodeUK:
     """Object to parse postal code to UK format."""
 
     def __init__(self, postcode):
         # define internal attributes
-        self.__regex_patterns = {'area': re.compile(r'^([A-Z]{1,2})'),
-                                 'district': re.compile(r'([0-9][A-Z0-9]?)$'),
-                                 'sector': re.compile(r'^([0-9])'),
-                                 'unit': re.compile(r'([A-Z]{2})$')}
         self.__raw_postcode = postcode
-        self.__full_postcode = None
+        self.__full_postcode = postcode.upper()
         self.__outward = None
         self.__inward = None
         self.__attributes = {'area': None, 'district': None, 'sector': None, 'unit': None}
         self.__errors = {}
 
-        # parses postcode format
-        self.__normalize_postcode()
-        self.__validate_postcode_sides()
-        self.__validate_postcode_attributes()
+        # splits outward and inward sides
+        self.__outward, self.__inward = self.split_sides_by_spaces(self.full_postcode)
+
+        # splits area and district sides
+        if self.outward:
+            outward_to_split = self.insert_space_before_digits(self.outward)
+            self.outward_splited = self.split_sides_by_spaces(outward_to_split)
+            self.__attributes['area'], self.__attributes['district'] = self.outward_splited
+
+        # splits sector and district unit
+        if self.inward:
+            if self.inward[0].isdigit():
+                inward_to_split = self.insert_space_after_digits(self.inward)
+            else:
+                inward_to_split = ' ' + self.inward
+            self.inward_splited = self.split_sides_by_spaces(inward_to_split)
+            self.__attributes['sector'], self.__attributes['unit'] = self.inward_splited
+
+        # parses postcode format in separated pieces
+        for name in list(self.__attributes.keys()):
+            regex_pattern = POSTCODE_VALIDATIONS[name]
+            attribute_value = self.attributes.get(name)
+            if not attribute_value or not regex_pattern.match(attribute_value):
+                self.__errors[name] = f'Invalid {name} format.'
+
+    def insert_space_before_digits(self, text_to_insert):
+        return re.sub(r'([0-9]+)', r' \1', text_to_insert)
+
+    def insert_space_after_digits(self, text_to_insert):
+        return re.sub(r'([0-9]+)', r'\1 ', text_to_insert)
+
+    def insert_space_at_beginning(self, text_to_insert):
+        return ' ' + text_to_insert
+
+    def split_sides_by_spaces(self, text_to_split):
+        left_side = None
+        right_side = None
+        splited_sides = re.split(r' +', text_to_split)
+        if splited_sides:
+            left_side = splited_sides[0]
+            if len(splited_sides) > 1:
+                right_side = ''.join(splited_sides[1:])
+        return left_side, right_side
 
     @property
     def regex_patterns(self):
@@ -46,6 +94,11 @@ class PostCodeUK:
     def inward(self):
         """Inward attribute"""
         return self.__inward
+
+    @property
+    def attributes(self):
+        """Postcode attributes"""
+        return self.__attributes
 
     @property
     def area(self):
@@ -76,39 +129,3 @@ class PostCodeUK:
     def is_valid(self):
         """Validation status"""
         return not self.__errors
-
-    def __normalize_postcode(self):
-        """Normalize raw postcode with uppercase and remove too many spaces"""
-        self.__full_postcode = self.__raw_postcode.upper()
-        self.__full_postcode = re.sub(r' +', ' ', self.__full_postcode)
-
-    def __validate_postcode_sides(self):
-        """Splits full postcode in 2 sides (outward and inward)"""
-        postcode_sides = self.__full_postcode.split(' ')
-        if len(postcode_sides) == 2:
-            self.__outward, self.__inward = postcode_sides
-        else:
-            self.__errors['missing_space'] = 'Postcode is missing space.'
-            return
-
-    def __validate_postcode_attributes(self):
-        """Validates postcode formats in separated sides as
-           (area and district in outward str) and (sector and unit inward str)
-        """
-        for postcode_side, attributes in [[self.outward, ['area', 'district']],
-                                          [self.inward, ['sector', 'unit']]]:
-            for name in attributes:
-                self.__attributes[name] = self.__get_first_regex_group(regex_pattern=self.regex_patterns[name],
-                                                                       search_in_text=postcode_side)
-                if not self.__attributes[name]:
-                    self.__errors[name] = f'Invalid {name} format.'
-
-    @staticmethod
-    def __get_first_regex_group(regex_pattern, search_in_text):
-        """Search regex in text and return first group matched"""
-        matched_search = regex_pattern.search(search_in_text)
-        if matched_search and matched_search.groups():
-            attribute_value = matched_search.groups()[0]
-            if attribute_value:
-                return attribute_value
-        return None
