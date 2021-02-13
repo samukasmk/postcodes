@@ -25,7 +25,7 @@ This example bellow validates a correct postcode from Facebook `'W1T 1FB'`
 
 >>> postcode = PostCodeUK('W1T 1FB')
 >>> postcode.is_valid
-False
+True
 
 >>> postcode.outward
 "W1T"
