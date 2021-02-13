@@ -21,7 +21,7 @@ class PostCodeUK:
         # define internal attributes
         self.__raw_postcode = postcode
         self.__full_postcode = postcode.upper()
-        self.__errors = None
+        self.__errors = {}
         self.__outward = None
         self.__inward = None
         self.__area = None
@@ -34,7 +34,7 @@ class PostCodeUK:
         self.__outward, self.__inward = self.__get_outward_and_inward()
         self.__area, self.__district = self.__get_area_and_district()
         self.__sector, self.__unit = self.__get_sector_and_unit()
-        self.__errors = self.__validate_postcode_attributes_format()
+        self.__errors.update(self.__validate_postcode_attributes_format())
 
     @property
     def raw_postcode(self):
@@ -91,8 +91,18 @@ class PostCodeUK:
         """Validation status"""
         return not self.__errors
 
+    def to_dict(self):
+        """Formating result in dict object"""
+        return {'postcode': self.full_postcode,
+                'is_valid': self.is_valid,
+                'attributes': {attr: getattr(self, attr) for attr in self.attributes},
+                'sides': {'outward': self.outward, 'inward': self.inward},
+                'errors': self.errors}
+
     def __get_outward_and_inward(self):
         """Splits full postcode string in outward and inward sides"""
+        if not REGEX_SPACES.search(self.full_postcode):
+            self.__errors['missing_space'] = 'Missing space in the postcode'
         return self.__split_sides_by_spaces(self.full_postcode)
 
     def __get_area_and_district(self):
