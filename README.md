@@ -432,8 +432,6 @@ docker-compose run postcodes --help
 ```
 
 ```
-Creating network "postcodes_postcodes" with driver "bridge"
-Creating postcodes_postcodes_run ... done
 usage: postcodes [-h] -p [POSTCODES ...] [-r {UK}] [-o {json,text}]
 
 A command line to parses postcodes.
@@ -453,7 +451,6 @@ options:
 
 ```commandline
 docker-compose run postcodes -p 'SW1A 1AA' --output-format json
-Creating postcodes_postcodes_run ... done
 ```
 
 ```
@@ -477,7 +474,6 @@ Results:
 
 ```commandline
 docker-compose run postcodes -p 'SW1A 1AA' --output-format json
-Creating postcodes_postcodes_run ... done
 ```
 
 ```
