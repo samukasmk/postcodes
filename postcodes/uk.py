@@ -102,7 +102,7 @@ class PostCodeUK:
     def __get_outward_and_inward(self):
         """Splits full postcode string in outward and inward sides"""
         if not REGEX_SPACES.search(self.full_postcode):
-            self.__errors['missing_space'] = 'Missing space in the postcode'
+            self.__errors['missing_space'] = 'Missing space separator to define outward and inward sides.'
         return self.__split_sides_by_spaces(self.full_postcode)
 
     def __get_area_and_district(self):
@@ -125,17 +125,18 @@ class PostCodeUK:
 
         return self.__split_sides_by_spaces(inward_to_split)
 
-    def __validate_postcode_attributes_format(self):
-        """Parses postcode format in separated pieces
-           The purpose of validating separate pieces is to obtain depth of
-           understanding on the exact attribute of the p that is incorrect"""
-        errors = {}
-        for name in self.attributes:
-            regex_pattern = POSTCODE_VALIDATIONS[name]
-            value = getattr(self, name)
-            if not value or not regex_pattern.match(value):
-                errors[name] = f'Invalid {name} format.'
-        return errors
+    @staticmethod
+    def __split_sides_by_spaces(text_to_split: str) -> Tuple[Optional[str], Optional[str]]:
+        """Splits string into two pieces
+           First piece is the first element found and second piece is the rest of matches"""
+        left_side = None
+        right_side = None
+        splited_sides = REGEX_SPACES.split(text_to_split)
+        if splited_sides:
+            left_side = splited_sides[0]
+            if len(splited_sides) > 1:
+                right_side = ''.join(splited_sides[1:])
+        return left_side, right_side
 
     @staticmethod
     def __insert_space_before_digits(text_to_insert: str) -> str:
@@ -152,15 +153,14 @@ class PostCodeUK:
         """Formats string to split inserting spaces at the string begging"""
         return ' ' + text_to_insert
 
-    @staticmethod
-    def __split_sides_by_spaces(text_to_split: str) -> Tuple[Optional[str], Optional[str]]:
-        """Splits string into two pieces
-           First piece is the first element found and second piece is the rest of matches"""
-        left_side = None
-        right_side = None
-        splited_sides = REGEX_SPACES.split(text_to_split)
-        if splited_sides:
-            left_side = splited_sides[0]
-            if len(splited_sides) > 1:
-                right_side = ''.join(splited_sides[1:])
-        return left_side, right_side
+    def __validate_postcode_attributes_format(self):
+        """Parses postcode format in separated pieces
+           The purpose of validating separate pieces is to obtain depth of
+           understanding on the exact attribute of the p that is incorrect"""
+        errors = {}
+        for name in self.attributes:
+            regex_pattern = POSTCODE_VALIDATIONS[name]
+            value = getattr(self, name)
+            if not value or not regex_pattern.match(value):
+                errors[name] = f'Invalid {name} format.'
+        return errors
