@@ -7,7 +7,7 @@ The main difference of this library is to show exactly which part of postcode is
 Instaling with pip (from github)
 
 ```
-pip install -e git://github.com/samukasmk/postcodes.git@v0.1.1#egg=postcodes
+pip install -e git+https://github.com/samukasmk/postcodes.git@v0.1.1#egg=postcodes
 ```
 
 On the future we will provides at pypi.org
