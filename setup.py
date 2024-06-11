@@ -26,7 +26,7 @@ setuptools.setup(
         "Operating System :: OS Independent",
     ],
     python_requires='>=3.6',
-    scripts=["scripts/postcodes"],
+    scripts=["postcodes/scripts/postcodes"],
     install_requires=install_requires,
     setup_requires='pytest-runner',
     tests_require=tests_requirements,

@@ -1,6 +1,6 @@
 import pytest
 
-from postcodes.uk import PostCodeUK
+from postcodes.parsers.uk import PostCodeUK
 
 
 def test_postcodes_uk_uppercase_normalization():

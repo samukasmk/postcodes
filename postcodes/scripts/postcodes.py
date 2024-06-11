@@ -1,9 +1,10 @@
 #!/usr/bin/env python
 
-import sys
-import json
 import argparse
-from postcodes.uk import PostCodeUK
+import json
+import sys
+
+from postcodes.parsers.uk import PostCodeUK
 
 
 def displays_header_text_output():
@@ -50,7 +51,7 @@ def displays_results_json_output(all_postcodes):
     print(json.dumps(all_postcodes, indent=4, sort_keys=True))
 
 
-if __name__ == '__main__':
+def main():
     parser = argparse.ArgumentParser(description='A command line to parses postcodes.')
     parser.add_argument('-p', '--postcodes', type=str, nargs='*', required=True,
                         help='The post code to analise.')
@@ -94,3 +95,7 @@ if __name__ == '__main__':
 
     # finish the program
     sys.exit(1 if invalid_postcodes else 0)
+
+
+if __name__ == '__main__':
+    main()
