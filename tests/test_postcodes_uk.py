@@ -6,8 +6,7 @@ from postcodes.uk import PostCodeUK
 def test_postcodes_uk_uppercase_normalization():
     raw_postcode = 'aa9a 9aa'
     postcode = PostCodeUK(raw_postcode)
-    assert postcode.raw_postcode == raw_postcode
-    assert postcode.full_postcode == 'AA9A 9AA'
+    assert postcode.postcode == 'AA9A 9AA'
 
 
 def test_postcodes_uk_outward_and_inward_validations():
@@ -26,8 +25,7 @@ def test_postcodes_uk_outward_and_inward_validations():
                                                                         ['AA99 9AA', 'AA', '99', '9', 'AA']])
 def test_postcodes_uk_valid_formats(raw_postcode, area, district, sector, unit):
     postcode = PostCodeUK(raw_postcode)
-    assert postcode.raw_postcode == raw_postcode
-    assert postcode.full_postcode == raw_postcode
+    assert postcode.postcode == raw_postcode
     assert postcode.area == area
     assert postcode.district == district
     assert postcode.sector == sector
@@ -40,8 +38,7 @@ def test_postcodes_uk_valid_formats(raw_postcode, area, district, sector, unit):
                                           'AAA99 9AA', 'AAAA99 9AA', 'AAAAA99 9AA', ])
 def test_postcodes_uk_invalid_area(raw_postcode):
     postcode = PostCodeUK(raw_postcode)
-    assert postcode.raw_postcode == raw_postcode
-    assert postcode.full_postcode == raw_postcode
+    assert postcode.postcode == raw_postcode
     assert postcode.is_valid is False
     assert postcode.errors == {'area': 'Invalid area format.'}
 
@@ -49,8 +46,7 @@ def test_postcodes_uk_invalid_area(raw_postcode):
 @pytest.mark.parametrize('raw_postcode', ['A 9AA', 'AA 9AA'])
 def test_postcodes_uk_invalid_district(raw_postcode):
     postcode = PostCodeUK(raw_postcode)
-    assert postcode.raw_postcode == raw_postcode
-    assert postcode.full_postcode == raw_postcode
+    assert postcode.postcode == raw_postcode
     assert postcode.is_valid is False
     assert postcode.errors == {'district': 'Invalid district format.'}
 
@@ -58,8 +54,7 @@ def test_postcodes_uk_invalid_district(raw_postcode):
 @pytest.mark.parametrize('raw_postcode', ['AA9A AA', 'A9A AA', 'A9 AA', 'A99 AA', 'AA9 AA', 'AA99 AA'])
 def test_postcodes_uk_invalid_sector(raw_postcode):
     postcode = PostCodeUK(raw_postcode)
-    assert postcode.raw_postcode == raw_postcode
-    assert postcode.full_postcode == raw_postcode
+    assert postcode.postcode == raw_postcode
     assert postcode.is_valid is False
     assert postcode.errors == {'sector': 'Invalid sector format.'}
 
@@ -70,8 +65,7 @@ def test_postcodes_uk_invalid_sector(raw_postcode):
                                           'AA99 9AAAA'])
 def test_postcodes_uk_invalid_unit(raw_postcode):
     postcode = PostCodeUK(raw_postcode)
-    assert postcode.raw_postcode == raw_postcode
-    assert postcode.full_postcode == raw_postcode
+    assert postcode.postcode == raw_postcode
     assert postcode.is_valid is False
     assert postcode.errors == {'unit': 'Invalid unit format.'}
 

@@ -14,7 +14,7 @@ def displays_postcode_text_output(postcode):
     # displays header
     print('\n---')
     status = 'VALID' if postcode.is_valid else 'INVALID'
-    print(f'Postcode ({postcode.full_postcode}) format is: {status}')
+    print(f'Postcode ({postcode.postcode}) format is: {status}')
 
     # displays errors reasons
     if not postcode.is_valid:
@@ -73,9 +73,9 @@ if __name__ == '__main__':
         postcode = PostCodeUK(raw_postcode)
         all_postcodes[raw_postcode] = postcode.to_dict()
         if postcode.is_valid:
-            valid_postcodes.append(postcode.full_postcode)
+            valid_postcodes.append(postcode.postcode)
         else:
-            invalid_postcodes.append(postcode.full_postcode)
+            invalid_postcodes.append(postcode.postcode)
 
         # if output_format if json skips verbose prints on display
         if args.output_format == 'json':

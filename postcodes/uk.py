@@ -15,12 +15,12 @@ POSTCODE_VALIDATIONS = {'area': REGEX_AREA_VALIDATION,
 
 
 class PostCodeUK:
-    """Object to parse postal code to UK format."""
+    """Object to parse postal code in UK format."""
 
     def __init__(self, postcode: str):
         # define internal attributes
-        self.__raw_postcode = postcode
-        self.__full_postcode = postcode.upper()
+        self.__postcode = postcode.upper()
+        self.__attributes = ('area', 'district', 'sector', 'unit')
         self.__errors = {}
         self.__outward = None
         self.__inward = None
@@ -28,23 +28,17 @@ class PostCodeUK:
         self.__district = None
         self.__sector = None
         self.__unit = None
-        self.__attributes = ('area', 'district', 'sector', 'unit')
 
         # parses postcode format
         self.__outward, self.__inward = self.__get_outward_and_inward()
         self.__area, self.__district = self.__get_area_and_district()
         self.__sector, self.__unit = self.__get_sector_and_unit()
-        self.__errors.update(self.__validate_postcode_attributes_format())
+        self.__errors.update(self.__validate_all_attributes())
 
     @property
-    def raw_postcode(self):
-        """Raw postcode text"""
-        return self.__raw_postcode
-
-    @property
-    def full_postcode(self):
+    def postcode(self):
         """Full postcode text normalized"""
-        return self.__full_postcode
+        return self.__postcode
 
     @property
     def errors(self):
@@ -93,7 +87,7 @@ class PostCodeUK:
 
     def to_dict(self):
         """Formating result in dict object"""
-        return {'postcode': self.full_postcode,
+        return {'postcode': self.postcode,
                 'is_valid': self.is_valid,
                 'attributes': {attr: getattr(self, attr) for attr in self.attributes},
                 'sides': {'outward': self.outward, 'inward': self.inward},
@@ -101,9 +95,9 @@ class PostCodeUK:
 
     def __get_outward_and_inward(self):
         """Splits full postcode string in outward and inward sides"""
-        if not REGEX_SPACES.search(self.full_postcode):
+        if not REGEX_SPACES.search(self.postcode):
             self.__errors['missing_space'] = 'Missing space separator to define outward and inward sides.'
-        return self.__split_sides_by_spaces(self.full_postcode)
+        return self.__split_sides_by_spaces(self.postcode)
 
     def __get_area_and_district(self):
         """Splits outward string in area and district sides"""
@@ -153,14 +147,24 @@ class PostCodeUK:
         """Formats string to split inserting spaces at the string begging"""
         return ' ' + text_to_insert
 
-    def __validate_postcode_attributes_format(self):
+    def __validate_all_attributes(self):
         """Parses postcode format in separated pieces
            The purpose of validating separate pieces is to obtain depth of
            understanding on the exact attribute of the p that is incorrect"""
         errors = {}
         for name in self.attributes:
-            regex_pattern = POSTCODE_VALIDATIONS[name]
             value = getattr(self, name)
-            if not value or not regex_pattern.match(value):
+            if PostCodeUK.validate_postcode_attribute(name, value) is False:
                 errors[name] = f'Invalid {name} format.'
         return errors
+
+    @staticmethod
+    def validate_postcode_attribute(attribute: str, value: str) -> bool:
+        """Validates single attribute of the postcode"""
+        if attribute not in POSTCODE_VALIDATIONS.keys():
+            raise ValueError(f'Invalid attribute name: {attribute}')
+
+        if not value:
+            return False
+
+        return POSTCODE_VALIDATIONS[attribute].match(value) is not None
