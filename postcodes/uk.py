@@ -96,7 +96,7 @@ class PostCodeUK:
     def __get_outward_and_inward(self):
         """Splits full postcode string in outward and inward sides"""
         if not REGEX_SPACES.search(self.postcode):
-            self.__errors['missing_space'] = 'Missing space separator to define outward and inward sides.'
+            self.__errors['missing_separator'] = 'Missing space separator to define outward and inward sides.'
         return self.__split_sides_by_spaces(self.postcode)
 
     def __get_area_and_district(self):

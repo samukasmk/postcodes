@@ -148,7 +148,7 @@ def test_postcodes_uk_to_dict_with_invalid_combined_district_and_sector():
                                   'sides': {'inward': 'AA', 'outward': 'AA'}}
 
 
-def test_postcodes_uk_to_dict_with_missing_space_letter():
+def test_postcodes_uk_to_dict_with_missing_separator_letter():
     raw_postcode = 'AAAA'
     postcode = PostCodeUK(raw_postcode)
     assert postcode.is_valid is False
@@ -156,7 +156,7 @@ def test_postcodes_uk_to_dict_with_missing_space_letter():
         'attributes': {'area': 'AAAA', 'district': None, 'sector': None, 'unit': None},
         'errors': {'area': 'Invalid area format.',
                    'district': 'Invalid district format.',
-                   'missing_space': 'Missing space separator to define outward and inward sides.',
+                   'missing_separator': 'Missing space separator to define outward and inward sides.',
                    'sector': 'Invalid sector format.',
                    'unit': 'Invalid unit format.'},
         'is_valid': False,
@@ -164,14 +164,14 @@ def test_postcodes_uk_to_dict_with_missing_space_letter():
         'sides': {'inward': None, 'outward': 'AAAA'}}
 
 
-def test_postcodes_uk_to_dict_with_missing_space_digit():
+def test_postcodes_uk_to_dict_with_missing_separator_digit():
     raw_postcode = '9'
     postcode = PostCodeUK(raw_postcode)
     assert postcode.is_valid is False
     assert postcode.to_dict() == {
         'attributes': {'area': '', 'district': '9', 'sector': None, 'unit': None},
         'errors': {'area': 'Invalid area format.',
-                   'missing_space': 'Missing space separator to define outward and inward sides.',
+                   'missing_separator': 'Missing space separator to define outward and inward sides.',
                    'sector': 'Invalid sector format.',
                    'unit': 'Invalid unit format.'},
         'is_valid': False,
