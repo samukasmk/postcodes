@@ -19,7 +19,7 @@ On the future we will provides at pypi.org
 This example below validates a correct postcode from Facebook `'W1T 1FB'`
 
 ```python
->>> from postcodes.uk import PostCodeUK
+>>> from postcodes.parsers.uk import PostCodeUK
 
 >>> postcode = PostCodeUK('W1T 1FB')
 >>> postcode.is_valid
@@ -56,7 +56,7 @@ True
 This example is it is similar to the previous using Facebook postcode but missing last 'B' from 'FB' area part
 
 ```python
->>> from postcodes.uk import PostCodeUK
+>>> from postcodes.parsers.uk import PostCodeUK
 
 >>> postcode = PostCodeUK('W1T 1F')
 >>> postcode.is_valid
@@ -98,7 +98,7 @@ So it will no work without spaces because the lib will considerates all string w
 The example of missing spaces below:
 
 ```python
->>> from postcodes.uk import PostCodeUK
+>>> from postcodes.parsers.uk import PostCodeUK
 
 >>> postcode = PostCodeUK('W1T1FB')
 >>> postcode.is_valid
