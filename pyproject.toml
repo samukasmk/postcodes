@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "postcodes"
-version = "0.1.0"
+version = "0.1.1"
 description = "Library to parse postal code format from the United Kingdom"
 authors = ["Samuel Sampaio <samukasmk@gmail.com>"]
 license = "Apache 2.0"

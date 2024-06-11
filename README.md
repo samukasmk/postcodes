@@ -9,7 +9,7 @@ The main goal of this package and difference of the others is to show in exactly
 Instaling with pip (from github)
 
 ```
-pip install -e git://github.com/samukasmk/postcodes.git@v0.1.0#egg=postcodes.egg-info
+pip install -e git://github.com/samukasmk/postcodes.git@v0.1.1#egg=postcodes
 ```
 
 On the future we will provides at pypi.org
@@ -140,6 +140,29 @@ None
             'district': 'Invalid district format.',
             'sector': 'Invalid sector format.',
             'unit': 'Invalid unit format.'}}
+```
+## Advanced usage
+
+For advanced usage you can use the `PostCodeUK` class to validate specific parts of postcode.
+
+```python
+>>> from postcodes.uk import PostCodeUK
+
+>>> # validating only the area part of Buckingham Palace postcode
+>>> PostCodeUK.validate_postcode_attribute('area', 'SW')
+True
+
+>>> # validating only the district part of Buckingham Palace postcode
+>>> PostCodeUK.validate_postcode_attribute('district', '1A')
+True
+
+>>> # validating only the sector part of Buckingham Palace postcode
+>>> PostCodeUK.validate_postcode_attribute('sector', '1')
+True
+
+>>> # validating only the unit part of Buckingham Palace postcode
+>>> PostCodeUK.validate_postcode_attribute('unit', 'AA')
+True
 ```
 
 ## Using Command line script for validations
