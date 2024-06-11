@@ -1,11 +1,24 @@
+[tool.poetry]
+name = "postcodes"
+version = "0.1.1"
+description = "Library to parse postal code format from the United Kingdom"
+authors = ["Samuel Sampaio <samukasmk@gmail.com>"]
+license = "Apache 2.0"
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.11"
+
+[tool.poetry.group.dev.dependencies]
+pyflakes = "^3.2.0"
+coverage = "^7.5.3"
+pytest = "^8.2.2"
+pytest-flakes = "^4.0.5"
+pytest-cov = "^5.0.0"
+
 [build-system]
-requires = [
-    "setuptools>=42",
-    "wheel"
-]
-build-backend = "setuptools.build_meta"
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
 
-[tool.pytest.ini_options]
-minversion = "6.0"
-addopts = "-s -v --tb=long --cache-clear --flakes --cov=postcodes"
-
+[tool.poetry.scripts]
+postcodes = "postcodes.scripts:postcodes.main"
