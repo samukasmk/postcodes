@@ -11,7 +11,7 @@ with open('requirements-dev.txt') as f:
 
 setuptools.setup(
     name="postcodes",
-    version="0.1.0",
+    version="0.1.1",
     author="Samuel Sampaio",
     author_email="samukasmk@gmail.com",
     license="Apache 2.0",
@@ -26,7 +26,7 @@ setuptools.setup(
         "Operating System :: OS Independent",
     ],
     python_requires='>=3.6',
-    scripts=["scripts/postcodes"],
+    scripts=["postcodes/scripts/postcodes"],
     install_requires=install_requires,
     setup_requires='pytest-runner',
     tests_require=tests_requirements,

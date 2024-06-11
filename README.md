@@ -9,7 +9,7 @@ The main goal of this package and difference of the others is to show in exactly
 Instaling with pip (from github)
 
 ```
-pip install -e git://github.com/samukasmk/postcodes.git@v0.1.0#egg=postcodes.egg-info
+pip install -e git://github.com/samukasmk/postcodes.git@v0.1.1#egg=postcodes
 ```
 
 On the future we will provides at pypi.org
@@ -21,27 +21,27 @@ On the future we will provides at pypi.org
 This example bellow validates a correct postcode from Facebook `'W1T 1FB'`
 
 ```python
->>> from postcodes.uk import PostCodeUK
+>> > from postcodes.parsers.uk import PostCodeUK
 
->>> postcode = PostCodeUK('W1T 1FB')
->>> postcode.is_valid
+>> > postcode = PostCodeUK('W1T 1FB')
+>> > postcode.is_valid
 False
 
->>> postcode.outward
+>> > postcode.outward
 "W1T"
->>> postcode.inward
+>> > postcode.inward
 "1FB"
 
->>> postcode.area
+>> > postcode.area
 "W"
->>> postcode.district
+>> > postcode.district
 "1T"
->>> postcode.sector
+>> > postcode.sector
 "1"
->>> postcode.unit
+>> > postcode.unit
 "FB"
 
->>> postcode.to_dict()
+>> > postcode.to_dict()
 {'postcode': 'W1T 1FB',
  'is_valid': True,
  'attributes': {'area': 'W',
@@ -58,30 +58,30 @@ False
 This example is it is similar to the previous using Facebook postcode but missing last 'B' from 'FB' area part
 
 ```python
->>> from postcodes.uk import PostCodeUK
+>> > from postcodes.parsers.uk import PostCodeUK
 
->>> postcode = PostCodeUK('W1T 1F')
->>> postcode.is_valid
+>> > postcode = PostCodeUK('W1T 1F')
+>> > postcode.is_valid
 False
 
->>> postcode.errors
+>> > postcode.errors
 {'unit': 'Invalid unit format.'}
 
->>> postcode.outward
+>> > postcode.outward
 "W1T"
->>> postcode.inward
+>> > postcode.inward
 "1F"
 
->>> postcode.area
+>> > postcode.area
 "W"
->>> postcode.district
+>> > postcode.district
 "1T"
->>> postcode.sector
+>> > postcode.sector
 "1"
->>> postcode.unit
+>> > postcode.unit
 "F"
 
->>> postcode.to_dict()
+>> > postcode.to_dict()
 {'postcode': 'W1T 1F',
  'is_valid': False,
  'attributes': {'area': 'W',
@@ -99,35 +99,34 @@ The space is very important to determine which part of postcode is wrong.
 So it will no work without spaces because the lib will considerates all string with outward side.
 The example of missing spaces bellow:
 
-
 ```python
->>> from postcodes.uk import PostCodeUK
+>> > from postcodes.parsers.uk import PostCodeUK
 
->>> postcode = PostCodeUK('W1T1FB')
->>> postcode.is_valid
+>> > postcode = PostCodeUK('W1T1FB')
+>> > postcode.is_valid
 False
 
->>> postcode.errors
+>> > postcode.errors
 {'missing_space': 'Missing space in the postcode',
  'district': 'Invalid district format.',
  'sector': 'Invalid sector format.',
  'unit': 'Invalid unit format.'}
 
->>> postcode.outward
+>> > postcode.outward
 "W1T1FB"
->>> postcode.inward
+>> > postcode.inward
 None
 
->>> postcode.area
+>> > postcode.area
 "W"
->>> postcode.district
+>> > postcode.district
 "1T1FB"
->>> postcode.sector
+>> > postcode.sector
 None
->>> postcode.unit
+>> > postcode.unit
 None
 
->>> postcode.to_dict()
+>> > postcode.to_dict()
 {'postcode': 'W1T1FB',
  'is_valid': False,
  'attributes': {'area': 'W',
@@ -140,6 +139,29 @@ None
             'district': 'Invalid district format.',
             'sector': 'Invalid sector format.',
             'unit': 'Invalid unit format.'}}
+```
+## Advanced usage
+
+For advanced usage you can use the `PostCodeUK` class to validate specific parts of postcode.
+
+```python
+>> > from postcodes.parsers.uk import PostCodeUK
+
+>> >  # validating only the area part of Buckingham Palace postcode
+>> > PostCodeUK.validate_postcode_attribute('area', 'SW')
+True
+
+>> >  # validating only the district part of Buckingham Palace postcode
+>> > PostCodeUK.validate_postcode_attribute('district', '1A')
+True
+
+>> >  # validating only the sector part of Buckingham Palace postcode
+>> > PostCodeUK.validate_postcode_attribute('sector', '1')
+True
+
+>> >  # validating only the unit part of Buckingham Palace postcode
+>> > PostCodeUK.validate_postcode_attribute('unit', 'AA')
+True
 ```
 
 ## Using Command line script for validations

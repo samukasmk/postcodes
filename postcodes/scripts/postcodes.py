@@ -1,9 +1,10 @@
 #!/usr/bin/env python
 
-import sys
-import json
 import argparse
-from postcodes.uk import PostCodeUK
+import json
+import sys
+
+from postcodes.parsers.uk import PostCodeUK
 
 
 def displays_header_text_output():
@@ -14,7 +15,7 @@ def displays_postcode_text_output(postcode):
     # displays header
     print('\n---')
     status = 'VALID' if postcode.is_valid else 'INVALID'
-    print(f'Postcode ({postcode.full_postcode}) format is: {status}')
+    print(f'Postcode ({postcode.postcode}) format is: {status}')
 
     # displays errors reasons
     if not postcode.is_valid:
@@ -50,7 +51,7 @@ def displays_results_json_output(all_postcodes):
     print(json.dumps(all_postcodes, indent=4, sort_keys=True))
 
 
-if __name__ == '__main__':
+def main():
     parser = argparse.ArgumentParser(description='A command line to parses postcodes.')
     parser.add_argument('-p', '--postcodes', type=str, nargs='*', required=True,
                         help='The post code to analise.')
@@ -73,9 +74,9 @@ if __name__ == '__main__':
         postcode = PostCodeUK(raw_postcode)
         all_postcodes[raw_postcode] = postcode.to_dict()
         if postcode.is_valid:
-            valid_postcodes.append(postcode.full_postcode)
+            valid_postcodes.append(postcode.postcode)
         else:
-            invalid_postcodes.append(postcode.full_postcode)
+            invalid_postcodes.append(postcode.postcode)
 
         # if output_format if json skips verbose prints on display
         if args.output_format == 'json':
@@ -94,3 +95,7 @@ if __name__ == '__main__':
 
     # finish the program
     sys.exit(1 if invalid_postcodes else 0)
+
+
+if __name__ == '__main__':
+    main()
