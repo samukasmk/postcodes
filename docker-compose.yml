@@ -1,0 +1,22 @@
+version: '3.5'
+
+services:
+  postcodes:
+    image: postcodes:latest
+    build:
+      context: .
+    entrypoint: ["postcodes"]
+    networks:
+      - postcodes
+
+  tests:
+    image: postcodes:latest
+    build:
+      context: .
+    entrypoint: ["pytest", "--verbose", "."]
+    networks:
+      - postcodes
+
+networks:
+  postcodes:
+    driver: bridge
