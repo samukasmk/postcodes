@@ -1,9 +1,7 @@
 # postcodes
-Library to parse postal code format
+Library to parse postal code format. This is the another one validation library of postcodes from the United Kingdom pattern.
 
-This is the another one validation libraries of postcodes in the United Kingdom.
-
-The main goal of this package and difference of the others is to show in exactly part of postcode is wrong and need to be fixup.
+The main difference of this library is to show exactly which part of postcode is wrong and need to be fixup.
 
 ## Installation
 Instaling with pip (from github)
